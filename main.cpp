@@ -6,6 +6,7 @@
 #include <fstream>
 #include "lpmCF.h"
 #include "lgdCF.h"
+#include <unordered_map>
 #include "IntegroVasicekMG.h"
 #include <ctime>
 #include <chrono> //for accurate multithreading time using std::chrono
@@ -13,8 +14,8 @@
 
 //Complex LPMToInvert(Complex u,
 int main(){
-	FangOosterlee invert(128, 1024);
-  int n=10000000;
+	FangOosterlee invert(256, 1024);
+  int n=1000000;
 	int m=3;
 	std::vector<double> alpha=std::vector<double>(m);
 	std::vector<double> sigma=std::vector<double>(m);
@@ -24,9 +25,12 @@ int main(){
 	alpha[0]=.2;
 	alpha[1]=.3;
 	alpha[2]=.4;
-	sigma[0]=.15;
+/*	sigma[0]=.2;
 	sigma[1]=.1;
-	sigma[2]=.2;
+	sigma[2]=.3;*/
+	sigma[0]=.6;
+	sigma[1]=.6;
+	sigma[2]=.6;
 	y0[0]=.9;
 	y0[1]=1;
 	y0[2]=1.1;
@@ -45,7 +49,7 @@ int main(){
 	//IntegroVasicekMG systemicRisk=IntegroVasicekMG(alpha, sigma, rho, y0, tau);
 
 	std::vector<double> p=std::vector<double>(n);
-	std::vector<std::map<std::string, double> > l=std::vector<std::map<std::string, double> >(n);
+	std::vector<std::unordered_map<std::string, double> > l=std::vector<std::unordered_map<std::string, double> >(n);
 	double alphL=.2;
 	double bL=.5;
 	double sigL=.2;
@@ -57,7 +61,7 @@ int main(){
 	for(int i=0; i<n; i++){
 		p[i]=maxP*rand()/RAND_MAX+.0001; //probability constrained between .0001 and .0301
 		//delete pd;
-		std::map<std::string, double> lMap;
+		std::unordered_map<std::string, double> lMap;
 		lMap["exposure"]=40000.0*rand()/RAND_MAX+10000.0; //exposures between 10000 and 50000...remember that these are just exposures, there is additional variability around this via the CIR process.  This value scales the CIR process multiplicatively
 		lMap["alpha"]=alphL;
 		lMap["beta"]=bL;
@@ -94,7 +98,7 @@ int main(){
 	auto start = std::chrono::system_clock::now();
 	std::cout<<"EL: "<<-el<<std::endl;
 
-	std::map<std::string, std::vector<double> > results=invert.computeDistribution(xmin, xmax, [&](Complex u) {return mg.execute(lp.logCF(u, p, l, w, lambda, q));});
+	std::unordered_map<std::string, std::vector<double> > results=invert.computeDistribution(xmin, xmax, [&](Complex u) {return mg.execute(lp.logCF(u, p, l, w, lambda, q));});
 	auto end=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()-start);
 
 	std::cout<<"Time it took: "<<end.count()/1000.0<<std::endl;

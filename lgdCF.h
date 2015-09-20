@@ -5,16 +5,16 @@
 #include <iostream> //for debugging
 #include "Complex.h"
 
-class lgdCF { 
+class lgdCF {
 	private:
-		double l;
+		/*double l;
 		double theta;
 		double lambda;
 		double sigma;
 		double t;
-		double x0;
+		double x0;*/
 	public:
-		lgdCF(double, double, double, double, double, double);
-		Complex execute(Complex&);
+		lgdCF();//double, double, double, double, double, double);
+		Complex execute(Complex&, double&, double&, double&, double&, double&, double&);
 };
 #endif

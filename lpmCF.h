@@ -6,7 +6,7 @@
 #include "Complex.h"
 #include "lgdCF.h"
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <iostream> //debugging
 
 class lpmCF { //implements ICharacteristicFunction
@@ -33,8 +33,8 @@ class lpmCF { //implements ICharacteristicFunction
 		lpmCF(std::vector<std::shared_ptr<double> >, std::vector<std::shared_ptr<std::map<std::string, double> > >, std::vector<std::vector<std::shared_ptr<double> > >); //p, l, w
 		lpmCF(std::vector<std::shared_ptr<double> >, std::vector<std::shared_ptr<std::map<std::string, double> > >, std::vector<std::vector<std::shared_ptr<double> > > ,std::vector<std::shared_ptr<double> > , std::vector<std::shared_ptr<double> > , double, double); //p, l, w, b, r, lambda0, q
 		std::vector<Complex> logCF(Complex);*/
-		std::vector<Complex> logCF(Complex&, std::vector<double >&, std::vector<std::map<std::string, double> >&, std::vector<std::vector<double> >&, double, double);
-		
+		std::vector<Complex> logCF(Complex&, std::vector<double >&, std::vector<std::unordered_map<std::string, double> >&, std::vector<std::vector<double> >&, double, double);
+
 		//int getM();
 };
 #endif
