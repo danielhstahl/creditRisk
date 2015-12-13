@@ -1,0 +1,9 @@
+{
+    "name":"creditRisk",
+    "git":"https://github.com/phillyfan1138/creditRisk.git",
+    "dependencies":[
+            "https://github.com/phillyfan1138/Complex.git",
+            "https://github.com/phillyfan1138/FangOostserlee.git"
+    ]
+
+}

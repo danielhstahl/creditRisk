@@ -7,6 +7,7 @@
 #include "lpmCF.h"
 #include "lgdCF.h"
 #include "Asset.h"
+#include <unordered_map>
 #include "IntegroVasicekMG.h"
 #include <ctime>
 #include <chrono> //for accurate multithreading time using std::chrono
