@@ -16,7 +16,7 @@
 
 int main(){
 	int xNum=1024;
-	int uNum=256; 
+	int uNum=256;
   int n=100000;//sensible defaults
 	int m=1;
 	std::vector<double> alpha=std::vector<double>(m);
@@ -60,11 +60,12 @@ int main(){
 	double sumL=0;
 	srand(5);
 	double maxP=.09;
-	double el=0;
+	//double el=0;
   double totalwP=0;
 	double q=.05;
 	double lambda=.05;
 	auto runParameters=[&](std::string& parameters){
+		sumL=0;
 		rapidjson::Document parms;
 		parms.Parse(parameters.c_str());//yield data
 		parameters.clear();
@@ -112,11 +113,13 @@ int main(){
 			}
 	    sumL+=exposure;
 	    loans.push_back(loan(maxP*rand()/RAND_MAX+.0001,exposure,w));//probability constrained between .0001 and maxP
-			el=el+exposure*loans[i].pd*bL;
-		}
+			//el=el+exposure*loans[i].pd*bL;
+		} 
 		FangOosterlee invert(uNum, xNum);
-		lambda=lambda*sumL;
-		q=q/sumL;
+		//lambda=lambda*sumL;
+		lambda=sumL*lambda; //proxy for n*exposure*lambda
+		q=q/lambda;
+
 		double xmax=0;
 		double xmin=-sumL*bL*maxP*.5*5;//5 is arbitrary
 		/*std::cout<<"EL: "<<-el<<std::endl;*/
