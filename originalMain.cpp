@@ -50,7 +50,7 @@ int main(){
     double alphL=.2;
 	double bL=.5;
 	double sigL=.2;
-    
+
     std::vector<loan> loans;
 	double sumL=0;
 	srand(5);
@@ -87,29 +87,29 @@ int main(){
 	double xmin=-sumL*bL*maxP*.5*5;//5 is arbitrary
 	auto start = std::chrono::system_clock::now();
 	std::cout<<"EL: "<<-el<<std::endl;
-    
+
     //std::cout<<"Test for lgdCF: "<<loans[0].lgdCF(Complex(.5, .5)).getReal()<<std::endl;
     //double exposure=20989.8;
     //std::cout<<"Test for lgdCF: "<<lgdCF(Complex(.5, .5), exposure, alphL, bL, sigL, tau, bL).getReal()<<std::endl;
-      
+
     std::vector<double> vasicekEL;
     std::vector<std::vector<double> > vasicekVR;
     computeVasicekMGF(vasicekEL, vasicekVR, alpha, sigma, rho, y0, tau);
-	std::unordered_map<std::string, std::vector<double> > results=invert.computeDistribution(
-        xmin, 
-        xmax, 
+		std::unordered_map<std::string, std::vector<double> > results=invert.computeDistribution(
+        xmin,
+        xmax,
         [&](Complex& u) {
             return executeVasicekMGF(
                 logLPMCF(
-                    u, 
-                    loans, 
+                    u,
+                    loans,
                     [&](Complex& u, loan& l){
                         return lgdCF(u, l.exposure, alphL, bL, sigL, tau, bL);
                     },
-                    lambda, 
+                    lambda,
                     q
-                ), 
-                vasicekEL, 
+                ),
+                vasicekEL,
                 vasicekVR
             );
         }
