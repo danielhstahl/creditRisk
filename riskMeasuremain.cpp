@@ -50,32 +50,31 @@ int main(){
     double alphL=.2;
 	double bL=.5;
 	double sigL=.2;
-
-    std::vector<loan> loans;
+  std::vector<loan> loans;
 	double sumL=0;
 	srand(5);
 	double maxP=.09;
 	double el=0;
-    double totalwP=0;
+  double totalwP=0;
 	for(int i=0; i<n; i++){
-        double exposure=40000.0*rand()/RAND_MAX+10000.0;
-        std::vector<double> w(m);
-        totalwP=0;
-        for(int j=0; j<m; j++){
-			w[j]=1.0*rand(); //randomly assign weights
-			totalwP=totalwP+w[j];
-		}
-		for(int j=0; j<m; j++){
-			w[j]=w[j]/totalwP;
-		}
-        sumL+=exposure;
-        loans.push_back(
-            loan(
-                maxP*rand()/RAND_MAX+.0001,//probability constrained between .0001 and maxP
-                exposure,
-                w
-            )
-        );
+      double exposure=40000.0*rand()/RAND_MAX+10000.0;
+      std::vector<double> w(m);
+      totalwP=0;
+      for(int j=0; j<m; j++){
+        w[j]=1.0*rand(); //randomly assign weights
+        totalwP=totalwP+w[j];
+      }
+      for(int j=0; j<m; j++){
+        w[j]=w[j]/totalwP;
+      }
+      sumL+=exposure;
+      loans.emplace_back(
+          loan(
+              maxP*rand()/RAND_MAX+.0001,//probability constrained between .0001 and maxP
+              exposure,
+              std::move(w)//just a temporary, don't copy
+          )
+      );
 		el=el+exposure*loans[i].pd*bL;
 	}
 	double lambda=.05*sumL;
