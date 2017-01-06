@@ -1,5 +1,4 @@
-LDFLAGS=-L ../Complex -lComplex -L ../FangOosterlee -lFangOosterlee
-INCLUDES=-I ../Complex  -I ../FangOosterlee -I../rapidjson
+INCLUDES=-I ../Complex  -I ../FangOost -I ../FunctionalUtilities
 creditRisk:main.o lgdCF.o
 	g++ -std=c++14 -O3  main.o lgdCF.o $(LDFLAGS) $(INCLUDES) -o creditRisk -fopenmp
 main.o: main.cpp IntegroVasicekMG.h lgdCF.h lpmCF.h
