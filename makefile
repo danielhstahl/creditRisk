@@ -1,11 +1,7 @@
-INCLUDES=-I ../Complex  -I ../FangOost -I ../FunctionalUtilities
-creditRisk:main.o lgdCF.o
-	g++ -std=c++14 -O3  main.o lgdCF.o $(LDFLAGS) $(INCLUDES) -o creditRisk -fopenmp
-main.o: main.cpp IntegroVasicekMG.h lgdCF.h lpmCF.h
+INCLUDES= -I ../FangOost -I ../FunctionalUtilities -I../rapidjson/include/rapidjson
+creditRisk:main.o 
+	g++ -std=c++14 -O3  main.o $(LDFLAGS) $(INCLUDES) -o creditRisk -fopenmp
+main.o: main.cpp IntegroVasicekMG.h lpmCF.h 
 	g++ -std=c++14 -O3  -c main.cpp $(LDFLAGS) $(INCLUDES) -fopenmp
-lgdCF.o: lgdCF.cpp lgdCF.h
-	g++ -std=c++14 -O3 -c lgdCF.cpp $(LDFLAGS) $(INCLUDES) -fopenmp
-
-
 clean:
 	     -rm *.o creditRisk
