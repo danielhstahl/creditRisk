@@ -1,41 +1,31 @@
-#ifndef __INTEGROVASICEKMG_H_INCLUDED__
-#define __INTEGROVASICEKMG_H_INCLUDED__
+#ifndef __CREDITUTILITIES_H_INCLUDED__
+#define __CREDITUTILITIES_H_INCLUDED__
 
 #include <cmath>
 #include <vector>
 #include <complex>
 #include "FunctionalUtilities.h"
 
-namespace creditriskutilities {
-    struct loan{
-        double pd;
-        //std::function<Complex(const Complex&)> lgdCF;//characteristic function
-        double exposure;
-        std::vector<double> w;
-        loan(double pd_, double exposure_, std::vector<double>&& w_){
-            pd=pd_;
-            exposure=exposure_;
-            w=w_;
-        }
-    };
-    /** u is typically complex*/
-    template<typename Number, typename Loans, typename LGDCF, typename Lambda, typename Q>
-    auto logLPMCF(const Number &u, const std::vector<Loans>& loans, const LGDCF& lgdCF, const Lambda& lambda, const Q& q){
-        int n=loans.size();
-        int m=loans[0].w.size();
-        auto upperU=-lambda*u; //liquidity risk..u*lambda*i
-        upperU=(exp(upperU)-1.0)*q;//.multiply(new Complex(0, 1));//q*(exp(i*u*lambda)-1)
-        upperU=upperU-u; //liquidity..u*i+q*(exp(u*lambda*i)-1)
+namespace creditutilities {
+    
+
+    template<typename Number, typename Lambda, typename Q>
+    auto getUpperU(const Number& u, const Lambda& lambda, const Q& q){
+        return -(exp(-u*lambda)-1.0)*q-u;
+    }
+
+    /** This function returns the exponent for the credit risk characteristic function: namely sum_j p_j Y (phi_j(u)-1).  Note that to do liquidity risk, pass .  For credit risk, "getUpperU" feeds this*/
+    template<typename Number, typename Loans, typename Incr, typename GetW, typename GetPD, typename LGDCF>
+    auto logLPMCF(const Number &u, const std::vector<Loans>& loans, const Incr& n, const Incr& m, const LGDCF& lgdCF, const GetPD& getPD, const GetW& getW){
         return futilities::for_each_parallel(0, m, [&](const auto& indexM){
-            futilities::sum(0, n, [&](const auto& index){
-                return (lgdCF(upperU, loans[index])-1.0)*loans[index].pd*loans[index].w[indexM];
+            return futilities::sum(0, n, [&](const auto& index){
+                return (lgdCF(u, loans[index])-1.0)*getPD(loans[index])*getW(loans[index], indexM);
             });
         });
     }
 
-
-    template<typename Number, typename LoanSize, typename Lambda, typename Theta, typename Sigma, typename T, typename X0>
-    auto lgdCF(const std::complex<Number> &u, const LoanSize &l, const Lambda &lambda,const Theta &theta, const Sigma &sigma, const T &t, const X0 &x0){/*I think this is a CIR characteristic function*/
+    template<typename Number, typename LoanExposure, typename Lambda, typename Theta, typename Sigma, typename T, typename X0>
+    auto lgdCF(const Number &u, const LoanExposure &l, const Lambda &lambda,const Theta &theta, const Sigma &sigma, const T &t, const X0 &x0){/*I think this is a CIR characteristic function.  "u" is typically complex*/
         auto expt=exp(-lambda*t);
         auto sigL=-sigma*sigma/(2*lambda);
         auto uu=u*l;
@@ -57,8 +47,6 @@ namespace creditriskutilities {
     */
     template<typename Number, typename Alpha, typename Tau>
     auto computeExpectationVasicek(const std::vector<Number>& y0, const std::vector<Alpha>& alpha, const Tau& tau){
-        //assert(y0.size()==alpha.size());
-
         return futilities::for_each_parallel_copy(y0, [&](const auto& val, const auto& index){
             return (val-1)*helpComputeMoments(alpha[index], tau);
         });
