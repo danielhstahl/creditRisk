@@ -2,3 +2,4 @@
 creditRisk 
 *.csv
 *.o
+.vscode
