@@ -14,7 +14,7 @@ namespace creditutilities {
         return -(exp(-u*lambda)-1.0)*q-u;
     }
 
-    /** This function returns the exponent for the credit risk characteristic function: namely sum_j p_j Y (phi_j(u)-1).  Note that to do liquidity risk, pass .  For credit risk, "getUpperU" feeds this*/
+    /** This function returns the exponent for the credit risk characteristic function: namely sum_j p_j Y (phi_j(u)-1).  Note that to do liquidity risk, pass "getUpperU"'s results to "u". */
     template<typename Number, typename Loans, typename Incr, typename GetW, typename GetPD, typename LGDCF>
     auto logLPMCF(const Number &u, const std::vector<Loans>& loans, const Incr& n, const Incr& m, const LGDCF& lgdCF, const GetPD& getPD, const GetW& getW){
         return futilities::for_each_parallel(0, m, [&](const auto& indexM){
@@ -24,8 +24,9 @@ namespace creditutilities {
         });
     }
 
+    /**Characteristic function for LGD.  Follows CIR process.  U is typically complex*/
     template<typename Number, typename LoanExposure, typename Lambda, typename Theta, typename Sigma, typename T, typename X0>
-    auto lgdCF(const Number &u, const LoanExposure &l, const Lambda &lambda,const Theta &theta, const Sigma &sigma, const T &t, const X0 &x0){/*I think this is a CIR characteristic function.  "u" is typically complex*/
+    auto lgdCF(const Number &u, const LoanExposure &l, const Lambda &lambda,const Theta &theta, const Sigma &sigma, const T &t, const X0 &x0){
         auto expt=exp(-lambda*t);
         auto sigL=-sigma*sigma/(2*lambda);
         auto uu=u*l;
@@ -56,7 +57,6 @@ namespace creditutilities {
     */
     template<typename Alpha, typename Tau, typename Sigma, typename Rho>
     auto computeVarianceVasicek(const std::vector<Alpha>& alpha, const std::vector<Sigma>& sigma, const std::vector<std::vector<Rho> >& rho,  const Tau& tau){
-        //assert(alpha.size()==sigma.size()&&rho.size()==alpha.size()&&rho[0].size()==alpha.size());
         int rowLength=alpha.size();
         return futilities::for_each_parallel(0, rowLength, [&](const auto& indexI){
             auto ai=helpComputeMoments(alpha[indexI], tau);
@@ -66,7 +66,7 @@ namespace creditutilities {
             });
         });
     }
-
+    /**Computes the expectation of a the exponential of a weighted combination of the multidemensional integrated vasicek process*/
     template<typename Expectation, typename Variance, typename Number>
     auto executeVasicekMGF(const std::vector<std::complex<Number> > &v, const std::vector<Expectation>& expectation , const std::vector< std::vector<Variance> >& variance){
 
