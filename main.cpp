@@ -13,9 +13,11 @@
 template<typename Container, typename Range>
 void printJson(const Container& myContainer, const Range& mn, const Range& dx){
 	std::cout<<"{\"y\":[";
-	for(const auto& val:myContainer){
-		std::cout<<val<<",";
+	auto n=myContainer.size();
+	for(int i=0; i<n-1;++i){
+		std::cout<<myContainer[i]<<",";
 	}
+	std::cout<<myContainer[n-1];
 	std::cout<<"],\"xmin\":"<<mn<<",\"dx\":"<<dx<<"}";
 }
 struct loan{
