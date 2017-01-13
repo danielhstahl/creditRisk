@@ -9,15 +9,14 @@
 #include "writer.h" //rapidjson
 #include "stringbuffer.h" //rapidjson
 #include "FunctionalUtilities.h"
-#include <fstream>
 
 template<typename Container, typename Range>
 void printJson(const Container& myContainer, const Range& mn, const Range& dx){
-	std::cout<<"{y:[";
+	std::cout<<"{\"y\":[";
 	for(const auto& val:myContainer){
 		std::cout<<val<<",";
 	}
-	std::cout<<"],xmin:"<<mn<<",dx:"<<dx<<"}\\n";
+	std::cout<<"],\"xmin\":"<<mn<<",\"dx\":"<<dx<<"}"<<std::endl;
 }
 struct loan{
 		double pd;
