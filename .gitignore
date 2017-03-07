@@ -3,3 +3,5 @@ creditRisk
 *.csv
 *.o
 .vscode
+*.gcno
+*.gcda
