@@ -1,6 +1,7 @@
 | [Linux][lin-link] | [Windows][win-link] | 
 | :---------------: | :-----------------: | 
 | ![lin-badge]      | ![win-badge]        | 
+
 [lin-badge]: https://travis-ci.org/phillyfan1138/creditRisk.svg?branch=master "Travis build status"
 [lin-link]:  https://travis-ci.org/phillyfan1138/creditRisk "Travis build status"
 [win-badge]: https://ci.appveyor.com/api/projects/status/l057e95lg15wnk70?svg=true "AppVeyor build status"
