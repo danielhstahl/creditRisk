@@ -70,7 +70,7 @@ int main(int argc, char* argv[]){
 	std::vector<double> y0(m, .5);
 	std::vector< std::vector<double> > rho(m, std::vector<double> (m, 1.0));
 	//These are parameters for the LGD CF function
-  const double alphL=.2;
+  	const double alphL=.2;
 	const double bL=.5;
 	const double sigL=.2;
 	srand(5);
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]){
 	const double lambda=lambdaUnscaled*expectedTotalExposure; //proxy for n*exposure*lambda
 	const double q=qUnscaled/lambda;
 	const double xmax=0;
-	const double xmin=-expectedTotalExposure*bL*maxP*.5*5;//5 is arbitrary
+	const double xmin=-expectedTotalExposure*bL*maxP*.5*5*tau;//5 is arbitrary
 
 	const auto expectation=creditutilities::computeExpectationVasicek(y0, alpha, tau);
 	const auto variance=creditutilities::computeVarianceVasicek(alpha, sigma, rho, tau);
