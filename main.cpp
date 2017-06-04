@@ -34,6 +34,15 @@ struct loan{
     }
 };
 
+double getXmin(double expectedTotalExposure, double bL, double maxP, double tau ){
+	double midPointPApprox=.5;
+	double arbitraryConstantThatWorksWellInExperiments=5;
+	return -expectedTotalExposure*bL*maxP*midPointPApprox*arbitraryConstantThatWorksWellInExperiments*tau;
+}
+double getRoughTotalExposure(double minLoanSize, double maxLoanSize, int numLoans){
+	double midPointLApprox=.5;
+	return (minLoanSize+midPointLApprox*(maxLoanSize-minLoanSize))*numLoans;
+}
 template<typename RAND>
 auto getP(double minP, double maxP,const RAND& rand){
 	return maxP*rand()/RAND_MAX+minP;
@@ -56,13 +65,13 @@ auto getNormalizedWeights(int numWeights, const RAND& rand){
 int main(int argc, char* argv[]){
 	int xNum=1024;
 	int uNum=256;
-  int n=100000;//sensible default values
+  	int numLoans=100000;
 	int m=1;
 	double tau=1;
 	double qUnscaled=.05;
 	double lambdaUnscaled=.05;
-	const double minLoan=10000;
-	const double maxLoan=50000;
+	const double minLoanSize=10000;
+	const double maxLoanSize=50000;
 	const double minP=.0001;
 	double maxP=.09;
 	std::vector<double> alpha(m, .2);
@@ -84,7 +93,7 @@ int main(int argc, char* argv[]){
 			uNum=parms["uNum"].GetInt();
 		}
 		if(parms.FindMember("n")!=parms.MemberEnd()){
-			n=parms["n"].GetInt();
+			numLoans=parms["n"].GetInt();
 		}
 		if(parms.FindMember("q")!=parms.MemberEnd()){
 			qUnscaled=parms["q"].GetDouble();
@@ -108,15 +117,15 @@ int main(int argc, char* argv[]){
 			y0[0]=parms["x0"].GetDouble();
 		}
 	}
-	const auto loans=futilities::for_each_parallel(0, n, [&](const auto& index){
-		return loan(getP( minP, maxP, rand), getExposure(minLoan, maxLoan, rand), getNormalizedWeights(m, rand));
+	const auto loans=futilities::for_each_parallel(0, numLoans, [&](const auto& index){
+		return loan(getP( minP, maxP, rand), getExposure(minLoanSize, maxLoanSize, rand), getNormalizedWeights(m, rand));
 	});
 
-	const double expectedTotalExposure=(minLoan+.5*(maxLoan-minLoan))*n;
+	const double expectedTotalExposure=getRoughTotalExposure(minLoanSize, maxLoanSize, numLoans);
 	const double lambda=lambdaUnscaled*expectedTotalExposure; //proxy for n*exposure*lambda
 	const double q=qUnscaled/lambda;
 	const double xmax=0;
-	const double xmin=-expectedTotalExposure*bL*maxP*.5*5*tau;//5 is arbitrary
+	const double xmin=getXmin(expectedTotalExposure, bL, maxP, tau);
 
 	const auto expectation=creditutilities::computeExpectationVasicek(y0, alpha, tau);
 	const auto variance=creditutilities::computeVarianceVasicek(alpha, sigma, rho, tau);
@@ -126,7 +135,7 @@ int main(int argc, char* argv[]){
 				creditutilities::logLPMCF(
 					creditutilities::getUpperU(u, lambda, q),
 					loans,
-					n, m, 
+					m, 
 					[&](const auto& u, const auto& l){
 						return creditutilities::lgdCF(u, l.exposure, alphL, bL, sigL, tau, bL);
 					},
