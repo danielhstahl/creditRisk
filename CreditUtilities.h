@@ -14,16 +14,19 @@ namespace creditutilities {
         return -(exp(-u*lambda)-1.0)*q-u;
     }
 
+
+    
     /** This function returns the exponent for the credit risk characteristic function: namely sum_j p_j Y (phi_j(u)-1).  Note that to do liquidity risk, pass "getUpperU"'s results to "u". */
     template<typename Number, typename Loans, typename Incr, typename GetW, typename GetPD, typename LGDCF>
     auto logLPMCF(const Number &u, const std::vector<Loans>& loans, const Incr& m, const LGDCF& lgdCF, const GetPD& getPD, const GetW& getW){
         return futilities::for_each_parallel(0, m, [&](const auto& indexM){
-            Incr n=loans.size();
-            return futilities::sum(0, n, [&](const auto& index){
-                return (lgdCF(u, loans[index])-1.0)*getPD(loans[index])*getW(loans[index], indexM);
+            return futilities::sum(loans, [&](const auto& loan, const auto& index){
+                return (lgdCF(u, loan)-1.0)*getPD(loan)*getW(loan, indexM);
             });
         });
     }
+
+
 
     /**Characteristic function for LGD.  Follows CIR process.  U is typically complex*/
     template<typename Number, typename LoanExposure, typename Lambda, typename Theta, typename Sigma, typename T, typename X0>
