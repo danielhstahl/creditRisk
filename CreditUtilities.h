@@ -6,6 +6,8 @@
 #include <complex>
 #include "FunctionalUtilities.h"
 
+
+/**This is not in its own repo because it is choices that must be made per implementation of each credit model*/
 namespace creditutilities {
     
 
