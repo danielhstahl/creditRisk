@@ -21,16 +21,16 @@ void printJson(const Container& myContainer, const Range& mn, const Range& dx){
 	std::cout<<"],\"xmin\":"<<mn<<",\"dx\":"<<dx<<"}";
 }
 struct loan{
-		double pd;
-		//std::function<Complex(const Complex&)> lgdCF;//characteristic function
-		double exposure;
-		std::vector<double> w;
-		loan(double pd_, double exposure_, std::vector<double>&& w_){
-				pd=pd_;
-				exposure=exposure_;
-				w=w_;
-		}
-		loan(){
+	double pd;
+	//std::function<Complex(const Complex&)> lgdCF;//characteristic function
+	double exposure;
+	std::vector<double> w;
+	loan(double pd_, double exposure_, std::vector<double>&& w_){
+			pd=pd_;
+			exposure=exposure_;
+			w=w_;
+	}
+	loan(){
     }
 };
 
