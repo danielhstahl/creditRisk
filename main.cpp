@@ -125,9 +125,10 @@ int main(int argc, char* argv[]){
 	const double expectedTotalExposure=getRoughTotalExposure(minLoanSize, maxLoanSize, numLoans);
 	const double lambda=lambdaUnscaled*expectedTotalExposure; //proxy for n*exposure*lambda
 	const double q=qUnscaled/lambda;
+
+
 	const double xmax=0;
 	const double xmin=getXmin(expectedTotalExposure, bL, maxP, tau);
-
 	const auto expectation=vasicek::computeIntegralExpectationLongRunOne(y0, alpha, alpha.size(), tau);
 	const auto variance=vasicek::computeIntegralVarianceVasicek(alpha, sigma, rho, alpha.size(), tau);
 
