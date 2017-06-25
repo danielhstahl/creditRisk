@@ -9,6 +9,7 @@
 #include "writer.h" //rapidjson
 #include "stringbuffer.h" //rapidjson
 #include "FunctionalUtilities.h"
+#include "Vasicek.h"
 
 template<typename Container, typename Range>
 void printJson(const Container& myContainer, const Range& mn, const Range& dx){
@@ -127,30 +128,28 @@ int main(int argc, char* argv[]){
 	const double xmax=0;
 	const double xmin=getXmin(expectedTotalExposure, bL, maxP, tau);
 
-	const auto expectation=creditutilities::computeExpectationVasicek(y0, alpha, tau);
-	const auto variance=creditutilities::computeVarianceVasicek(alpha, sigma, rho, tau);
+	const auto expectation=vasicek::computeIntegralExpectationLongRunOne(y0, alpha, alpha.size(), tau);
+	const auto variance=vasicek::computeIntegralVarianceVasicek(alpha, sigma, rho, alpha.size(), tau);
 
 	const auto density=fangoost::computeInv(xNum, uNum,  xmin, xmax, [&](const auto& u){
-		return creditutilities::executeVasicekMGF(
-				creditutilities::logLPMCF(
-					creditutilities::getLiquidityRisk(u, lambda, q),
-					loans,
-					m, 
-					[&](const auto& u, const auto& l){
-						return creditutilities::lgdCF(u, l.exposure, alphL, bL, sigL, tau, bL);
-					},
-					[](const auto& loan){
-						return loan.pd;
-					},
-					[](const auto& loan, const auto& index){
-						return loan.w[index];
-					}
-				),
-				expectation,
-				variance
-			);
+		return vasicek::getVasicekMFGFn(expectation, variance)(
+			creditutilities::logLPMCF(
+				creditutilities::getLiquidityRisk(u, lambda, q),
+				loans,
+				m, 
+				[&](const auto& u, const auto& l){
+					return creditutilities::lgdCF(u, l.exposure, alphL, bL, sigL, tau, bL);
+				},
+				[](const auto& loan){
+					return loan.pd;
+				},
+				[](const auto& loan, const auto& index){
+					return loan.w[index];
+				}
+			)
+		);
 	});
 	const auto dx=fangoost::computeDX(xNum, xmin, xmax);
 	printJson(density, xmin, dx);
-	
+
 }
