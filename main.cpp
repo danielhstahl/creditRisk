@@ -133,7 +133,7 @@ int main(int argc, char* argv[]){
 	const auto density=fangoost::computeInv(xNum, uNum,  xmin, xmax, [&](const auto& u){
 		return creditutilities::executeVasicekMGF(
 				creditutilities::logLPMCF(
-					creditutilities::getUpperU(u, lambda, q),
+					creditutilities::getLiquidityRisk(u, lambda, q),
 					loans,
 					m, 
 					[&](const auto& u, const auto& l){
